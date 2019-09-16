@@ -3,5 +3,4 @@ requests
 connexion
 flask
 ics
-notify-run
 gunicorn
