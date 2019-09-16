@@ -1,0 +1,6 @@
+requests
+# To install with swawgger ui use connexion[swagger-ui]
+connexion
+flask
+ics
+notify-run

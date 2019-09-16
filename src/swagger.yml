@@ -1,0 +1,87 @@
+openapi: 3.0.0
+info:
+  title: RAPLA Filtering API
+  description: Filters a RAPLA Schedule based on the user's preferences
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api
+    description: Local API Server
+paths:
+  /schedule/{uname}/{planname}/plain:
+    get:
+      operationId: "schedule.read_plain"
+      summary: Returns the unfiltered schedule directly from RAPLA
+      parameters:
+        - name: uname
+          in: path
+          required: true
+          description: The username of the schedule creator in RAPLA
+          schema:
+            type : string
+        - name: planname
+          in: path
+          required: true
+          description: The name of the schedule in RAPLA
+          schema:
+            type : string
+      responses:
+        '200':    # status code
+          description: The unfiltered ical
+          content:
+            text/calendar; charset=utf-8:
+              schema:
+                type: string
+  /schedule/{uname}/{planname}:
+    get:
+      operationId: "schedule.read_filtered"
+      summary: Returns the filtered schedule from RAPLA
+      parameters:
+        - name: uname
+          in: path
+          required: true
+          description: The username of the schedule creator in RAPLA
+          schema:
+            type : string
+        - name: planname
+          in: path
+          required: true
+          description: The name of the schedule in RAPLA
+          schema:
+            type : string
+        - in: query
+          name: course
+          schema:
+            type: string
+          description: The course to filter for
+      responses:
+        '200':    # status code
+          description: The filtered ical
+          content:
+            text/calendar; charset=utf-8:
+              schema:
+                type: string
+  /schedule/{uname}/{planname}/notification:
+    get:
+      operationId: "schedule.get_notification_link"
+      summary: Redirects the user to the Notification sign-up site
+      parameters:
+        - name: uname
+          in: path
+          required: true
+          description: The username of the schedule creator in RAPLA
+          schema:
+            type : string
+        - name: planname
+          in: path
+          required: true
+          description: The name of the schedule in RAPLA
+          schema:
+            type : string
+        - in: query
+          name: course
+          schema:
+            type: string
+          description: The course to filter for
+      responses:
+        '302':    # status code
+          description: OK
