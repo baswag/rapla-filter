@@ -21,7 +21,8 @@ services:
         container_name: rapla-filter
         environment:
             - TZ=Europe/Berlin
-            - APP_RAPLA_URL=MAIN_RAPLA_URL
+            - APP_RAPLA_URL=<MAIN_RAPLA_URL>
+            - APP_FCM_KEY=<YOUR_FIREBASE_API_KEY>
         ports:
             - 5000:5000
         volumes:
@@ -33,6 +34,7 @@ volumes:
 
 The `APP_RAPLA_URL` environment variable has to be in the format  
 `http://hostname/rapla?page=ical&user={}&file={}`  
+The Firebase API key can be obtained in the Firebase Console  
 
 ## Building
 
@@ -40,7 +42,7 @@ To build the docker image simply run `docker build .`.
 
 ## Notifications
 
-Notifications are handled via [notify.run](https://notify.run)
+Notifications are handeled via a Firebase Cloud Messaging Service
 
 ## API Endpoints
 
@@ -63,3 +65,11 @@ This endpoint returns the ICAL string from RAPLA filtered by course
 ## /schedule/{uname}/{planname}/notification?course={course}
 
 This endpoint redirects the user to the [notify.run](https://notify.run) notification sign-up page for the specified plan filtered by course  
+
+## /notification/subscribe?uname={uname}&planname={planname}&course={course}&token={token}
+
+This endpoint adds or removes a FCM client identified by {token} from the notifications for a course
+
+## /notification/status?uname={uname}&planname={planname}&course={course}&token={token}
+
+This endpoint returns a boolean describing whether a FCM client identified by {token} is subscribed to the given notifications

@@ -4,26 +4,58 @@ info:
   description: Filters a RAPLA Schedule based on the user's preferences
   version: 1.0.0
 servers:
-  - url: http://localhost:5000/api
+  - url: http://localhost:8000/api
     description: Local API Server
+components:
+  parameters:
+    uname:
+      name: uname
+      in: path
+      required: true
+      description: The username of the schedule creator in RAPLA
+      schema:
+        type : string
+    uname-query:
+      name: uname
+      in: query
+      required: true
+      description: The username of the schedule creator in RAPLA
+      schema:
+        type : string
+    planname:
+      name: planname
+      in: path
+      required: true
+      description: The name of the schedule in RAPLA
+      schema:
+        type : string
+    planname-query:
+      name: planname
+      in: query
+      required: true
+      description: The name of the schedule in RAPLA
+      schema:
+        type : string
+    course:
+      in: query
+      name: course
+      schema:
+        type: string
+      description: The course to filter for
+    token:
+      in: query
+      name: token
+      schema:
+        type: string
+      description: The messaging client Token
 paths:
   /schedule/{uname}/{planname}/plain:
     get:
       operationId: "schedule.read_plain"
       summary: Returns the unfiltered schedule directly from RAPLA
       parameters:
-        - name: uname
-          in: path
-          required: true
-          description: The username of the schedule creator in RAPLA
-          schema:
-            type : string
-        - name: planname
-          in: path
-          required: true
-          description: The name of the schedule in RAPLA
-          schema:
-            type : string
+        - $ref: '#/components/parameters/uname'
+        - $ref: '#/components/parameters/planname'
       responses:
         '200':    # status code
           description: The unfiltered ical
@@ -36,23 +68,9 @@ paths:
       operationId: "schedule.read_filtered"
       summary: Returns the filtered schedule from RAPLA
       parameters:
-        - name: uname
-          in: path
-          required: true
-          description: The username of the schedule creator in RAPLA
-          schema:
-            type : string
-        - name: planname
-          in: path
-          required: true
-          description: The name of the schedule in RAPLA
-          schema:
-            type : string
-        - in: query
-          name: course
-          schema:
-            type: string
-          description: The course to filter for
+        - $ref: '#/components/parameters/uname'
+        - $ref: '#/components/parameters/planname'
+        - $ref: '#/components/parameters/course'
       responses:
         '200':    # status code
           description: The filtered ical
@@ -62,26 +80,36 @@ paths:
                 type: string
   /schedule/{uname}/{planname}/notification:
     get:
-      operationId: "schedule.get_notification_link"
+      operationId: "notification.get_notification_link"
       summary: Redirects the user to the Notification sign-up site
       parameters:
-        - name: uname
-          in: path
-          required: true
-          description: The username of the schedule creator in RAPLA
-          schema:
-            type : string
-        - name: planname
-          in: path
-          required: true
-          description: The name of the schedule in RAPLA
-          schema:
-            type : string
-        - in: query
-          name: course
-          schema:
-            type: string
-          description: The course to filter for
+        - $ref: '#/components/parameters/uname'
+        - $ref: '#/components/parameters/planname'
+        - $ref: '#/components/parameters/course'
       responses:
         '302':    # status code
+          description: OK
+  /notification/subscribe:
+    get:
+      operationId: "notification.subscribe_to_notification"
+      summary: Subscribes/Unsubscribes to a notification channel
+      parameters:
+        - $ref: '#/components/parameters/uname-query'
+        - $ref: '#/components/parameters/planname-query'
+        - $ref: '#/components/parameters/course'
+        - $ref: '#/components/parameters/token'
+      responses:
+        '200':    # status code
+          description: OK
+  /notification/status:
+    get:
+      operationId: "notification.get_notification_status"
+      summary: Gets the user's current subscription status
+      parameters:
+        - $ref: '#/components/parameters/uname-query'
+        - $ref: '#/components/parameters/planname-query'
+        - $ref: '#/components/parameters/course'
+        - $ref: '#/components/parameters/token'
+      responses:
+        '200':    # status code
           description: OK
