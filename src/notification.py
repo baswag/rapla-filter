@@ -29,7 +29,7 @@ def check_notification(uname, planname, course, new_cal):
         with open(directory+"/calendar.ics") as f:
             data = f.read()
         # Check if change in calendar
-        if new_cal_str.replace('\r', '') == data:
+        if new_cal_str.replace('\r', '') != data:
             with open(directory+"/calendar.ics", 'w') as f:
                 f.write(new_cal_str)
             # Send the notification
