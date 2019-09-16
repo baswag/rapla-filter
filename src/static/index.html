@@ -1,10 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Application Home Page</title>
-</head>
+<html>
+<title>Rapla Filter Notifier</title>
+<style>
+    div {
+        margin-bottom: 15px;
+    }
+</style>
 <body>
-    Da die zurzeitige Art Benachrichtigungen zu senden keine Abbestellungen der Nachrichten erlaubt ist diese Funktion zurzeit nicht verfügbar
-</body>
+    Dieser Dienst dient der Zustellung von Benachrichtigungen über Änderungen am Vorlesungsplan.<br/>
+    Zum Abbestellen bzw. Neu bestellen muss lediglich dieser Link erneut aufgerufen werden.
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        // TODO: Replace with your project's customized code snippet
+        var config = {
+            messagingSenderId: "369863703648",
+        };
+        firebase.initializeApp(config);
+
+        const messaging = firebase.messaging();
+        messaging
+            .requestPermission()
+            .then(function () {
+                console.log("Notification permission granted.");
+                
+                // get the token in the form of promise
+                return messaging.getToken();
+            })
+            .then(function(token) {
+                console.log("Got Messaging Token", token);
+                var search = window.location.search;
+                var params = new URLSearchParams(search);
+                console.log(params.get("uname"));
+                console.log(params.get("planname"));
+                console.log(params.get("course"));
+                var xhr = new XMLHttpRequest();
+                params.append("token", token);
+
+                var url = "/api/notification/subscribe?"+params.toString();
+                // get a callback when the server responds
+                xhr.addEventListener('load', () => {
+                    // update the state of the component with the result here
+                    console.log(xhr.responseText);
+                })
+                // open the request with the verb and the url
+
+                xhr.open('GET', url);
+                // send the request
+                xhr.send();
+            })
+            .catch(function (err) {
+                alert("Benachrichtigungen müssen aktiviert sein");
+                console.log("Unable to get permission to notify.", err);
+            });
+
+        messaging.onMessage(function(payload) {
+            alert(payload.notification.title+"\n"+payload.notification.body);
+        });
+    </script>
+
+    </body>
+
 </html>
