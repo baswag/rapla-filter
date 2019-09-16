@@ -157,5 +157,7 @@ def get_notification_link(uname, planname, course):
         flas.redirect -- A 302 redirect to the corresponding notify.run channel
     """
     directory = "./notifications/{}/{}/{}".format(uname,planname,course)
-    redirect_url = get_notifier_endpoint(directory).replace('notify.run/','notify.run/c/')
+    #redirect_url = get_notifier_endpoint(directory).replace('notify.run/','notify.run/c/')
+    redirect_url = "https://rapla.baswag.de"
+    print(redirect_url)
     return redirect(redirect_url)
