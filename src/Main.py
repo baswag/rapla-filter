@@ -1,4 +1,3 @@
-from flask import render_template
 import os
 import connexion
 
@@ -7,4 +6,4 @@ app.add_api('swagger.yml')
 
 if __name__ == '__main__':
     dbg = os.environ.get('APP_DEBUG') == '1'
-    app.run(host='0.0.0.0', port=5000, debug=dbg, threaded=True)
+    app.run(debug=dbg)
