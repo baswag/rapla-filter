@@ -41,7 +41,7 @@ The Firebase API key can be obtained in the Firebase Console
 
 ## Building
 
-To build the development docker image simply run `docker build .`.  
+To build the development docker image simply run `docker build .`
 To build the production docker image use the `--target prod` option when building
 
 ## Notifications
