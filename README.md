@@ -52,28 +52,28 @@ Notifications are handeled via a Firebase Cloud Messaging Service
 
 If `connexion` is installed with the optional `swagger-ui` package the swagger UI will be served at `localhost:5000/api/ui`
 
-## Common Parameters
+### Common Parameters
 
 - `uname` - The username of the RAPLA schedule creator
 - `planname` - The name of the schedule in RAPLA
 - `course` - The course the schedule should be filtered by
 
-## /schedule/{uname}/{planname}/plain
+### /schedule/{uname}/{planname}/plain
 
 This endpoint returns the unfiltered ICAL string from RAPLA  
 
-## /schedule/{uname}/{planname}?course={course}
+### /schedule/{uname}/{planname}?course={course}
 
 This endpoint returns the ICAL string from RAPLA filtered by course
 
-## /schedule/{uname}/{planname}/notification?course={course}
+### /schedule/{uname}/{planname}/notification?course={course}
 
 This endpoint redirects the user to the [notify.run](https://notify.run) notification sign-up page for the specified plan filtered by course  
 
-## /notification/subscribe?uname={uname}&planname={planname}&course={course}&token={token}
+### /notification/subscribe?uname={uname}&planname={planname}&course={course}&token={token}
 
 This endpoint adds or removes a FCM client identified by {token} from the notifications for a course
 
-## /notification/status?uname={uname}&planname={planname}&course={course}&token={token}
+### /notification/status?uname={uname}&planname={planname}&course={course}&token={token}
 
 This endpoint returns a boolean describing whether a FCM client identified by {token} is subscribed to the given notifications
