@@ -13,6 +13,16 @@ NOTIFICATION_TEXT = "Dein Vorlesungsplan hat sich geändert!"
 
 
 def get_difference_in_calendars(old, new):
+    """Get the dates in which an old and new Calendar differ.
+    An Event differs if it is not included in the other calendar
+    
+    Arguments:
+        old {str} -- The old calendar
+        new {str} -- The new calendar
+    
+    Returns:
+        list(str) -- A list of unique dates in DD.MM.YYYY format
+    """
     changed_dates = []
     old_cal = Calendar(old)
     new_cal = Calendar(new)
@@ -32,7 +42,7 @@ def get_difference_in_calendars(old, new):
 
 
 def check_notification(uname, planname, course, new_cal):
-    """Chack if a notification should be sent and send it if needed
+    """Check if a notification should be sent and send it if needed
 
     Arguments:
         uname {str} -- The creator of the RAPLA schedule
