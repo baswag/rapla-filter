@@ -3,12 +3,12 @@ FROM base as builder
 
 RUN mkdir /install
 WORKDIR /install
+
 COPY requirements.txt /requirements.txt
+RUN pip install --ignore-install --upgrade --prefix=/install -r /requirements.txt
 
-RUN pip install --install-option="--prefix=/install" -r /requirements.txt
-RUN pip install --install-option="--prefix=/install" pyfcm
 
-FROM base
+FROM base as prod
 COPY --from=builder /install /usr/local
 
 RUN apk add --update --no-cache nginx
@@ -25,3 +25,10 @@ WORKDIR /app
 
 EXPOSE 5000
 CMD ["./entrypoint.sh"]
+
+
+FROM prod as debug
+
+RUN pip install connexion[swagger-ui]
+ENV APP_DEBUG 1
+COPY src/entrypoint_debug.sh /app/entrypoint.sh

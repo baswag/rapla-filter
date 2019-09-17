@@ -10,6 +10,9 @@ Requirements can be found in the `requirements.txt` file.
 
 The preferred way of installing rapla-filter is using the docker image
 
+An alternate image including the `swagger-ui` is available under the `dev` tag.  
+This version also does not use `gunicorn` and should therefore not be used in production environments.
+
 Example `docker-compose.yml`:  
 
 ```yaml
@@ -38,7 +41,8 @@ The Firebase API key can be obtained in the Firebase Console
 
 ## Building
 
-To build the docker image simply run `docker build .`.
+To build the development docker image simply run `docker build .`.  
+To build the production docker image use the `--target prod` option when building
 
 ## Notifications
 

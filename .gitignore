@@ -1,5 +1,6 @@
 # rapla-filter data directories
 src/notifications/
+run.env
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

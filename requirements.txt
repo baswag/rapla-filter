@@ -2,5 +2,6 @@ requests
 # To install with swawgger ui use connexion[swagger-ui]
 connexion
 flask
-ics
+ics>=0.5
 gunicorn
+pyfcm
