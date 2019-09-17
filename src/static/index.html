@@ -1,13 +1,18 @@
 <html>
-<title>Rapla Filter Notifier</title>
-<style>
-    div {
-        margin-bottom: 15px;
-    }
-</style>
+<head>
+    <title>Rapla Filter Notifier</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+    <style>
+        div {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
 <body>
     Dieser Dienst dient der Zustellung von Benachrichtigungen über Änderungen am Vorlesungsplan.<br/>
-    Zum Abbestellen bzw. Neu bestellen muss lediglich dieser Link erneut aufgerufen werden.
+    Zum Abbestellen bzw. Neu bestellen muss lediglich dieser Link erneut aufgerufen werden.<br/>
+    Um auf einem Anderen Gerät auch die Benachrichtigungen zu aktivieren kann einfach dieser QR-Code gescannt werden:</br><br/>
     <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
     <script>
         // Initialize Firebase
@@ -55,6 +60,26 @@
 
         messaging.onMessage(function(payload) {
             alert(payload.notification.title+"\n"+payload.notification.body);
+        });
+
+        // jQuery script to generate a QR-code to the current URL
+        $(document).ready(function(){
+            $('body').append($('<div/>',{
+                id:'qrCode'
+            }));
+            $('#qrCode').css({
+                padding: '20px',
+                backgroundColor: '#fff'
+            }).on('click',function(){
+                $(this).css('display','none');
+            }).qrcode({
+                render: "canvas", // or 'table'
+                width:200,
+                height:200,
+                background: "#ffffff",
+                foreground: "#000000",
+                text:window.location.href
+            });
         });
     </script>
 

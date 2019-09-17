@@ -1,8 +1,10 @@
-from ics import Calendar, Event
-import requests
-import re
 import os
+import re
 from threading import Thread
+
+import requests
+from ics import Calendar, Event
+
 import notification
 
 MAIN_URL = os.environ.get('APP_RAPLA_URL')
@@ -11,25 +13,26 @@ ROOM_REGEX = '(\w\d{3}\w|\w\d{3})'
 
 def read_plain(uname, planname):
     """Reads and returns the plain RAPLA schedule
-    
+
     Arguments:
         uname {str} -- The RAPLA schedule creator
         planname {str} -- The name of the schedule
-    
+
     Returns:
         str -- The ical string from RAPLA
     """
-    r = requests.get(MAIN_URL.format(uname,planname))
+    r = requests.get(MAIN_URL.format(uname, planname))
     return r.text
+
 
 def read_filtered(uname, planname, course):
     """Reads and filters a RAPLA schedule
-    
+
     Arguments:
         uname {str} -- The RAPLA schedule creator
         planname {str} -- The name of the schedule
         course {str} -- The course to filter
-    
+
     Returns:
         str -- The filtered ical string
     """
@@ -44,7 +47,7 @@ def read_filtered(uname, planname, course):
         if course not in event.location:
             continue
         # Find all rooms for event and construct the new location string
-        rooms = re.findall(ROOM_REGEX,event.location)
+        rooms = re.findall(ROOM_REGEX, event.location)
         room_str = ""
         for room in rooms:
             room_str += room + ", "
@@ -54,6 +57,7 @@ def read_filtered(uname, planname, course):
     # Create the new Calendar
     new_cal = Calendar(events=new_events, creator=c.creator)
     # Run async as to not block main Thread
-    check_thr = Thread(target=notification.check_notification, args=(uname,planname,course,new_cal))
+    check_thr = Thread(target=notification.check_notification,
+                       args=(uname, planname, course, new_cal))
     check_thr.start()
     return new_cal.__str__()

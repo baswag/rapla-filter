@@ -1,12 +1,35 @@
-from pyfcm import FCMNotification
+import os
 import pickle
 import urllib.parse
-import os
+
 from flask import redirect
+from ics import Calendar
+from pyfcm import FCMNotification
+
 push_service = FCMNotification(api_key=os.environ.get("APP_FCM_KEY"))
 
 NOTIFICATION_TITLE = "RAPLA Update"
 NOTIFICATION_TEXT = "Dein Vorlesungsplan hat sich geändert!"
+
+
+def get_difference_in_calendars(old, new):
+    changed_dates = []
+    old_cal = Calendar(old)
+    new_cal = Calendar(new)
+    old_events = old_cal.events
+    new_events = new_cal.events
+    for event in old_events:
+        if event not in new_events:
+            date = event.begin.format("DD.MM.YYYY")
+            changed_dates.append(date)
+    for event in new_events:
+        if event not in old_events:
+            date = event.begin.format("DD.MM.YYYY")
+            changed_dates.append(date)
+    changed_dates = list(set(changed_dates))
+    changed_dates.sort()
+    return changed_dates
+
 
 def check_notification(uname, planname, course, new_cal):
     """Chack if a notification should be sent and send it if needed
@@ -23,17 +46,22 @@ def check_notification(uname, planname, course, new_cal):
     # If the path does not exist yet
     if not os.path.exists(directory):
         os.makedirs(directory)
-
     # If an old calendar exists
     if os.path.exists(directory+"/calendar.ics"):
         with open(directory+"/calendar.ics") as f:
             data = f.read()
+        new_cal_str = new_cal_str.replace('\r', '')
         # Check if change in calendar
-        if new_cal_str.replace('\r', '') != data:
+        if new_cal_str != data:
             with open(directory+"/calendar.ics", 'w') as f:
                 f.write(new_cal_str)
             # Send the notification
-            send_notification(uname, planname, course, NOTIFICATION_TEXT)
+            changed_dates = get_difference_in_calendars(data, new_cal_str)
+
+            notify_text = NOTIFICATION_TEXT+"\nÄnderungen an folgenden Tagen:"
+            for date in changed_dates:
+                notify_text += "\n"+date
+            send_notification(uname, planname, course, notify_text)
     else:
         # New calendar, send notification
         with open(directory+"/calendar.ics", 'w') as f:
@@ -52,8 +80,8 @@ def send_notification(uname, planname, course, text):
     try:
         with open(directory+"/subscribers", "rb") as f:
             subscribers = pickle.load(f)
-        print(push_service.notify_multiple_devices(message_body=NOTIFICATION_TEXT,
-                                                   message_title=NOTIFICATION_TITLE, registration_ids=subscribers))
+        push_service.notify_multiple_devices(
+            message_body=text, message_title=NOTIFICATION_TITLE, registration_ids=subscribers)
     except FileNotFoundError:
         print("No subscribers for this course")
     except Exception as e:
@@ -81,7 +109,7 @@ def get_notification_link(uname, planname, course):
 
 def subscribe_to_notification(uname, planname, course, token):
     """Subscribes to a Notification for a course
-    
+
     Arguments:
         COMMON ARGUMENTS
         token {str} -- The FCM Client Token
@@ -114,11 +142,11 @@ def subscribe_to_notification(uname, planname, course, token):
 
 def get_notification_status(uname, planname, course, token):
     """Returns the status of the subscription
-    
+
     Arguments:
         COMMON ARGUMENTS
         token {str} -- The FCM Client Token
-    
+
     Returns:
         bool -- Is this token subscribed?
     """

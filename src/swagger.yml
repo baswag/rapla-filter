@@ -5,7 +5,13 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8000/api
-    description: Local API Server
+    description: Local Development Server
+  - url: http://localhost:5000/api
+    description: Local Docker API Server
+  - url: https://dev.baswag.de/api
+    description: Development API Server
+  - url: https://rapla.baswag.de/api
+    description: Production API Server
 components:
   parameters:
     uname:
