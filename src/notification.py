@@ -1,6 +1,7 @@
 import os
 import pickle
 import urllib.parse
+from datetime import datetime
 
 from flask import redirect
 from ics import Calendar
@@ -30,14 +31,14 @@ def get_difference_in_calendars(old, new):
     new_events = new_cal.events
     for event in old_events:
         if event not in new_events:
-            date = event.begin.format("DD.MM.YYYY")
-            changed_dates.append(date)
+            changed_dates.append(event.begin.format("DD.MM.YYYY"))
     for event in new_events:
         if event not in old_events:
-            date = event.begin.format("DD.MM.YYYY")
-            changed_dates.append(date)
+            changed_dates.append(event.begin.format("DD.MM.YYYY"))
+    
     changed_dates = list(set(changed_dates))
-    changed_dates.sort()
+    changed_dates.sort(key = lambda date: datetime.strptime(date, '%d.%m.%Y'))
+    print(changed_dates)
     return changed_dates
 
 
